@@ -1,0 +1,37 @@
+# --- Security & Secrets (NEVER UPLOAD THESE) ---
+.env
+.env.local
+.env.*
+secrets/
+keys/
+*.pem
+*.key
+
+# --- Mac/OSX system files ---
+.DS_Store
+
+# --- Node/Web Dependencies ---
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# --- Python/AI Server Dependencies ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.pytest_cache/
+
+# --- Flutter/Mobile Dependencies ---
+.dart_tool/
+build/
+.pub-cache/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# --- IDEs and Editors ---
+.vscode/
+.idea/
+*.swp
