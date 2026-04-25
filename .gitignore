@@ -35,3 +35,9 @@ build/
 .vscode/
 .idea/
 *.swp
+
+
+# --- AI Models & Heavy Assets ---
+models/
+*.gguf
+*.bin
