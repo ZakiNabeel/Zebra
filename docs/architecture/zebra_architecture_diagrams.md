@@ -1,6 +1,8 @@
 # 🦓 Zebra — Architecture Diagrams
 ### All 12 Modules: Use Case + System Sequence Diagrams
 
+> ⚠️ **Superseded (2026-06-11 pivot).** These diagrams describe the v1 Flutter + on-device-SLM ("Edge AI") architecture, which has been scrapped. The current direction is a web-first Next.js + Supabase + Capacitor stack with creation-time cloud AI behind a moderation/approval gate — see [docs/plan/03-tech-stack.md](../plan/03-tech-stack.md). The module breakdown (IAM, curation, safety, sync, compliance…) remains a useful functional reference; the Edge-SLM/self-hosted-GPU deployment model does not. Edge/on-device inference is retained only as a possible future cost optimization.
+
 > **Legend**  
 > 🟦 **Edge AI (On-Device SLM)** — runs locally on the user's device, no cloud required  
 > 🟧 **Cloud GPU** — self-hosted inference server for heavy generative workloads  
