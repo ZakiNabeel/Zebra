@@ -151,10 +151,10 @@ packages:
     dependency: "direct main"
     description:
       name: llama_cpp_dart
-      sha256: "8bfc902fb6ef80ec0a2d06d5cdb499364271f9a6c6f11623ca9d7b4488fa7a98"
+      sha256: "809f3a4c30aba48c436d72425fe2afcbb9d8b77d38cda3317bbf68579b2f7315"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.2.1"
   matcher:
     dependency: transitive
     description:
