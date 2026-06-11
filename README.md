@@ -25,8 +25,18 @@ Zebra is a walled-garden learning and stories platform. Children read, listen, s
 
 ## Status
 
-- **2026-06-11 — Pivot:** scrapped the Flutter + on-device-SLM v1 architecture in favor of web-first Next.js (the `app/` Flutter project and `docs/architecture/` diagrams are retained as legacy reference). Languages narrowed to **Urdu + English**. Go-to-market: **schools first**.
-- Next: pre-week checklist, then the one-week MVP build.
+- **2026-06-11 — Pivot:** scrapped the Flutter + on-device-SLM v1 architecture in favor of web-first Next.js (now archived in `legacy/flutter-app/`; old diagrams in `docs/architecture/` are legacy reference). Languages narrowed to **Urdu + English**. Go-to-market: **schools first**.
+- **2026-06-11 — Sprint 1 shipped:** web foundation in `apps/web` — onboarding, PIN-gated Kid Mode, bilingual story library + reader, safety filter with tests, Supabase schema ready. See the [sprint log](docs/sprints/) ([report](docs/sprints/sprint-01-foundation.md) · [sequence diagrams](docs/sprints/sprint-01-sequence-diagrams.md)).
+- Next: Sprint 2 — Supabase live (auth, RLS), TTS narration pipeline.
+
+## Run it
+
+```
+cd apps/web
+npm install
+npm run dev    # http://localhost:3000
+npm test
+```
 
 ---
 *Developed under the MIT License. See `LICENSE` for more information.*

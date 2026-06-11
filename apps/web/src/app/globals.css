@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  /* Zebra brand palette — see docs/plan/03-tech-stack.md §5 */
+  --zebra-ink: #2d2a32;
+  --zebra-cream: #fff8ec;
+  --zebra-paper: #ffffff;
+  --zebra-mango: #ff8a3d;
+  --zebra-mango-deep: #e86f1f;
+  --zebra-teal: #2bb3a3;
+  --zebra-teal-deep: #1e8d80;
+  --zebra-sky: #7ec8e3;
+  --zebra-night: #2b3a67;
+  --zebra-sunshine: #ffd23f;
+  --zebra-berry: #b388eb;
+  --zebra-rose: #ff6b8a;
+  --zebra-leaf: #7fb069;
+}
+
+@theme inline {
+  --color-ink: var(--zebra-ink);
+  --color-cream: var(--zebra-cream);
+  --color-paper: var(--zebra-paper);
+  --color-mango: var(--zebra-mango);
+  --color-mango-deep: var(--zebra-mango-deep);
+  --color-teal: var(--zebra-teal);
+  --color-teal-deep: var(--zebra-teal-deep);
+  --color-sky: var(--zebra-sky);
+  --color-night: var(--zebra-night);
+  --color-sunshine: var(--zebra-sunshine);
+  --color-berry: var(--zebra-berry);
+  --color-rose: var(--zebra-rose);
+  --color-leaf: var(--zebra-leaf);
+  --font-kid: var(--font-baloo);
+  --font-urdu: var(--font-nastaliq);
+}
+
+body {
+  background: var(--zebra-cream);
+  color: var(--zebra-ink);
+  font-family: var(--font-baloo), system-ui, sans-serif;
+}
+
+/* Urdu text: Nastaliq needs generous line height and a larger optical size */
+.urdu {
+  font-family: var(--font-nastaliq), serif;
+  line-height: 2.2;
+  letter-spacing: 0;
+}
+
+/* Kid Mode: disable text selection & callouts so little fingers don't trigger them */
+.kid-surface {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
