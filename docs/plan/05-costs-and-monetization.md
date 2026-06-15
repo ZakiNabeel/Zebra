@@ -1,6 +1,30 @@
 # 🦓 Zebra — Costs & Monetization
 
-> Part of the [Zebra Master Plan](../../README.md). Goal: minimum cost to launch, honest unit economics, revenue from schools first. Last updated: 2026-06-11.
+> Part of the [Zebra Master Plan](../../README.md). Goal: minimum cost to launch, honest unit economics, revenue from schools first. Last updated: 2026-06-15.
+
+## 0. The $0 MVP path (this is the build target)
+
+**The entire MVP ships for literally zero dollars.** Every piece runs on a permanent free tier. Nothing here is a trial that expires — these are standing free allowances we stay inside by design (generate-once-serve-forever keeps us far below every cap).
+
+| Need | $0 choice | Free allowance | Why we stay inside it |
+|---|---|---|---|
+| Web hosting | **Vercel Hobby** | Unlimited static, generous bandwidth | PWA is mostly static + CDN-cached content |
+| Backend (DB, auth, storage, RLS) | **Supabase Free** | 50K MAU · 500MB DB · 1GB storage | Kids consume cached files; no Realtime fan-out (see §note) |
+| Domain | **`zebra.vercel.app`** subdomain | Free | Custom domain ($12/yr) waits for revenue |
+| Story/quiz/slide text | **Google AI Studio (Gemini Flash)** | Free tier, ~15 req/min, 1500/day | Generation is adult-initiated + cached; batch the library |
+| Narration (TTS) | **Azure Speech Free (F0)** | 0.5M chars/month free | A whole seed library is ~50–100K chars; render once |
+| Illustrations | **Cloudflare Workers AI (Flux-1-schnell)** | ~10K Neurons/day free | Batch-generate library art; or ship the SVG cast (free forever) |
+| Text moderation | **OpenAI Moderation API** | Free, unlimited | Runs on every generation |
+| Image moderation | **Cloudflare Workers AI / Google Vision SafeSearch** | Free allowance / 1K-img/month | One check per generated image |
+| Analytics | **PostHog Free** (adult surfaces only) | 1M events/month | Kid Mode sends nothing anyway |
+
+**Deferred until you have revenue or traction (NOT needed for the MVP):**
+- ❌ Google Play ($25) & Apple Developer ($99) — **the PWA installs to a phone home screen for free.** We package native apps only once schools/parents are paying.
+- ❌ Commissioned character art — **the built-in SVG cast is genuinely $0 and ships today.** Commission model sheets when revenue exists; until then, free AI image gen (Cloudflare/HF) plus the SVG cast carry us.
+- ❌ Paid image APIs (fal.ai/Replicate), ElevenLabs, real AI video — all replaced by free-tier equivalents above for the MVP.
+- ❌ Lawyer/trademark — needed before signing a *paying* school, not before the demo.
+
+> **Note on Supabase scale (validated 2026-06-15):** Supabase = managed Postgres, so normal SQL indexing/RLS discipline is all it takes to scale. The free tier's one hard wall — **200 concurrent Realtime connections** — is a live-chat/cursors problem. Zebra streams nothing live to kids (content is static + CDN-cached), so that cap never binds us. We only move to Pro ($25/mo: 100K MAU, 8GB DB, daily backups) when the DB outgrows 500MB — a success milestone, not a launch cost. Keep `user_id`/`profile_id` indexed (the columns used in RLS) and queries stay <50ms.
 
 ## 1. The cost insight that makes Zebra cheap
 

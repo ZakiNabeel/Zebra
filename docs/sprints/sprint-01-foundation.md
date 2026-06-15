@@ -50,13 +50,24 @@ Characters appear as hand-drawn placeholder SVG scenes (Zee, Dada Kachwa, Mano, 
 - **Profile-based language, not URL locales:** a parent browsing in Urdu can have one child reading in English and another in Urdu — language lives on the profile/app state, not the route.
 - **Placeholder SVG cast now:** keeps the reader beautiful enough to demo while real character design happens in parallel; the art system swaps per-scene without touching stories.
 
-## What I need from you (Zakin)
+## What I need from you (Zakin) — all $0
 
-1. **Supabase project** (free tier) — create at supabase.com, send URL + anon key + service-role key → unlocks sprint 2.
-2. **API keys when ready:** Google AI Studio (Gemini), Azure Speech (ur-PK voices), fal.ai or Replicate, OpenAI (moderation only). See [apps/web/.env.example](../../apps/web/.env.example).
-3. **Character art:** approve/adjust the cast names ([docs/plan/02-features.md](../plan/02-features.md) §6) and commission model sheets — the single best money you can spend this month.
-4. **Urdu review:** 30 minutes from a native speaker over `dictionaries.ts` and the three seed stories.
-5. **Store accounts:** start Google Play ($25) and Apple Developer ($99) registrations now — review queues take days.
+The MVP costs **nothing**. Everything below is a free account or a few minutes of your time — no paid services, no store fees, no commissions (see [docs/plan/05 §0](../plan/05-costs-and-monetization.md) for the full $0 stack).
+
+**Free accounts to create (just paste the keys into `apps/web/.env.local`):**
+1. **Supabase** (free tier) — create at supabase.com → send URL + anon key + service-role key → unlocks Sprint 2 (real auth + cloud sync).
+2. **Google AI Studio** (free Gemini key) → Sprint 3 story generation.
+3. **Azure Speech free tier (F0)** → Sprint 2/3 Urdu+English narration (0.5M chars/mo free).
+4. **Cloudflare** (free Workers AI) → Sprint 3 illustrations. *(Until then, the built-in SVG cast is our $0 art.)*
+5. **OpenAI** (moderation endpoint is free) → Sprint 3 safety stack.
+
+**A few minutes of your time (free):**
+6. **Urdu review** — you (or family) read over `dictionaries.ts` + the three seed stories. You're the native speaker; no cost.
+7. **Approve the cast** — confirm/rename Zee, Mano, Sitara, Bholu, Cheeko, Dada Kachwa ([docs/plan/02 §6](../plan/02-features.md)).
+
+**Explicitly NOT needed now (deferred until revenue):**
+- ❌ Google Play ($25) / Apple Developer ($99) — the PWA installs to a phone home screen for free; we package native apps once there's traction.
+- ❌ Commissioned illustrator, paid image/voice APIs, custom domain, legal — none of it gates the MVP.
 
 ## How to run it
 
