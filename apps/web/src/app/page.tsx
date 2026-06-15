@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { ParentalGate } from "@/components/ParentalGate";
 import { StoryArt } from "@/components/art/StoryArt";
 import { t, fontFor, useUiLang } from "@/lib/i18n";
-import { useFamily, useHydrated } from "@/lib/store/family";
+import { useFamily, useHydrated, CLOUD } from "@/lib/store/family";
 
 export default function LandingPage() {
   const hydrated = useHydrated();
@@ -54,11 +54,18 @@ export default function LandingPage() {
           </Button>
         </div>
       ) : (
-        <Link href="/onboarding">
-          <Button size="xl" className={f}>
-            {t(lang, "getStarted")} →
-          </Button>
-        </Link>
+        <div className="flex flex-col items-center gap-3">
+          <Link href="/onboarding">
+            <Button size="xl" className={f}>
+              {t(lang, "getStarted")} →
+            </Button>
+          </Link>
+          {CLOUD && (
+            <Link href="/auth" className="font-bold text-teal underline">
+              {t(lang, "haveAccount")} {t(lang, "signIn")}
+            </Link>
+          )}
+        </div>
       )}
 
       {showGate && (

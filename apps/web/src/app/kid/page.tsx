@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ParentalGate } from "@/components/ParentalGate";
 import { t, fontFor, useUiLang } from "@/lib/i18n";
-import { useFamily, useHydrated } from "@/lib/store/family";
+import { useFamily, useHydrated, CLOUD } from "@/lib/store/family";
 
 /** Kid Mode entry: big-avatar profile picker. */
 export default function ProfilePicker() {
@@ -14,6 +14,7 @@ export default function ProfilePicker() {
   const lang = useUiLang((s) => s.lang);
   const profiles = useFamily((s) => s.profiles);
   const family = useFamily((s) => s.family);
+  const userEmail = useFamily((s) => s.userEmail);
   const lockParent = useFamily((s) => s.lockParent);
   const [showGate, setShowGate] = useState(false);
   const f = fontFor(lang);
@@ -24,8 +25,10 @@ export default function ProfilePicker() {
   }, [lockParent]);
 
   useEffect(() => {
-    if (hydrated && !family) router.replace("/onboarding");
-  }, [hydrated, family, router]);
+    if (!hydrated) return;
+    if (CLOUD && !userEmail) router.replace("/auth");
+    else if (!family) router.replace("/onboarding");
+  }, [hydrated, family, userEmail, router]);
 
   if (!hydrated || !family) return null;
 

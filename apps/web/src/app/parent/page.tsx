@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { t, fontFor, useUiLang } from "@/lib/i18n";
-import { useFamily, useHydrated } from "@/lib/store/family";
+import { useFamily, useHydrated, CLOUD } from "@/lib/store/family";
 import { SEED_STORIES } from "@/lib/content/seed-stories";
+import { libraryCount as cloudLibraryCount } from "@/lib/data/cloud";
 import type { AgeBand, StoryLang } from "@/lib/content/types";
 
 const AVATARS = ["🦓", "🐢", "🐆", "🐬", "🦜", "⭐", "🌙", "🚀"];
@@ -15,7 +16,8 @@ export default function ParentDashboard() {
   const hydrated = useHydrated();
   const router = useRouter();
   const { lang, toggle } = useUiLang();
-  const { family, profiles, parentUnlocked, addProfile, removeProfile, lockParent } = useFamily();
+  const { family, profiles, parentUnlocked, userEmail, addProfile, removeProfile, lockParent, signOut } =
+    useFamily();
   const f = fontFor(lang);
 
   const [adding, setAdding] = useState(false);
@@ -23,20 +25,32 @@ export default function ParentDashboard() {
   const [ageBand, setAgeBand] = useState<AgeBand>("3-5");
   const [storyLang, setStoryLang] = useState<StoryLang>("ur");
   const [avatar, setAvatar] = useState(AVATARS[1]);
+  const [libCount, setLibCount] = useState(SEED_STORIES.length);
 
-  // Guard: no family → onboarding; locked → home (gate lives there).
+  // Guard: signed out (cloud) → /auth; no family → onboarding; locked → gate.
   useEffect(() => {
     if (!hydrated) return;
-    if (!family) router.replace("/onboarding");
+    if (CLOUD && !userEmail) router.replace("/auth");
+    else if (!family) router.replace("/onboarding");
     else if (!parentUnlocked) router.replace("/");
-  }, [hydrated, family, parentUnlocked, router]);
+  }, [hydrated, family, parentUnlocked, userEmail, router]);
+
+  // Live library count from the cloud when available.
+  useEffect(() => {
+    if (CLOUD && parentUnlocked) cloudLibraryCount().then(setLibCount).catch(() => {});
+  }, [parentUnlocked]);
 
   if (!hydrated || !family || !parentUnlocked) return null;
 
-  function saveChild() {
-    addProfile({ name: name.trim(), ageBand, language: storyLang, avatar });
+  async function saveChild() {
+    await addProfile({ name: name.trim(), ageBand, language: storyLang, avatar });
     setName("");
     setAdding(false);
+  }
+
+  async function handleSignOut() {
+    await signOut();
+    router.push("/");
   }
 
   return (
@@ -50,6 +64,11 @@ export default function ParentDashboard() {
           <button onClick={toggle} className="rounded-2xl bg-white px-3 py-2 font-bold border border-ink/10">
             {t(lang, "language")}
           </button>
+          {CLOUD && (
+            <Button variant="ghost" onClick={handleSignOut} className={f}>
+              {t(lang, "signOut")}
+            </Button>
+          )}
           <Button
             variant="ghost"
             onClick={() => {
@@ -77,7 +96,7 @@ export default function ParentDashboard() {
                   {p.ageBand} · {p.language === "ur" ? t(lang, "urdu") : t(lang, "english")}
                 </div>
               </div>
-              <button onClick={() => removeProfile(p.id)} className="text-sm font-bold text-rose">
+              <button onClick={() => void removeProfile(p.id)} className="text-sm font-bold text-rose">
                 {t(lang, "delete")}
               </button>
             </div>
@@ -160,7 +179,7 @@ export default function ParentDashboard() {
       <section className="mb-8">
         <h2 className="mb-3 text-xl font-bold">📚 {t(lang, "pdLibrary")}</h2>
         <div className="rounded-3xl bg-white p-5 border border-ink/10">
-          <span className="text-3xl font-extrabold text-teal">{SEED_STORIES.length}</span>{" "}
+          <span className="text-3xl font-extrabold text-teal">{libCount}</span>{" "}
           <span className="text-ink/70">{t(lang, "pdLibraryCount")}</span>
         </div>
       </section>

@@ -1,25 +1,33 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { PinPad } from "@/components/ui/PinPad";
 import { t, fontFor, useUiLang, type Lang } from "@/lib/i18n";
-import { useFamily } from "@/lib/store/family";
+import { useFamily, CLOUD } from "@/lib/store/family";
 import type { AgeBand, StoryLang } from "@/lib/content/types";
 
 const AVATARS = ["🦓", "🐢", "🐆", "🐬", "🦜", "⭐", "🌙", "🚀"];
 
-type Step = "family" | "pin" | "confirmPin" | "child";
+type Step = "account" | "family" | "pin" | "confirmPin" | "child";
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { lang, setLang } = useUiLang();
-  const createFamily = useFamily((s) => s.createFamily);
-  const addProfile = useFamily((s) => s.addProfile);
+  const { signUp, createFamily, addProfile } = useFamily();
   const f = fontFor(lang);
 
-  const [step, setStep] = useState<Step>("family");
+  // Cloud mode starts with account creation; local mode skips straight to family.
+  const [step, setStep] = useState<Step>(CLOUD ? "account" : "family");
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [confirmNotice, setConfirmNotice] = useState(false);
+  const [busy, setBusy] = useState(false);
+
   const [familyName, setFamilyName] = useState("");
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState(false);
@@ -28,15 +36,84 @@ export default function OnboardingPage() {
   const [storyLang, setStoryLang] = useState<StoryLang>("ur");
   const [avatar, setAvatar] = useState(AVATARS[0]);
 
+  async function createAccount(e: React.FormEvent) {
+    e.preventDefault();
+    setAuthError(null);
+    if (password.length < 6) {
+      setAuthError(t(lang, "weakPassword"));
+      return;
+    }
+    setBusy(true);
+    try {
+      const { hasSession } = await signUp(email.trim(), password);
+      if (hasSession) setStep("family");
+      else setConfirmNotice(true); // email-confirmation is on; tell them to confirm
+    } catch {
+      setAuthError(t(lang, "authError"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function finish() {
-    await createFamily(familyName.trim(), pin);
-    addProfile({ name: childName.trim(), ageBand, language: storyLang, avatar });
-    router.push("/parent");
+    setBusy(true);
+    try {
+      await createFamily(familyName.trim(), pin);
+      await addProfile({ name: childName.trim(), ageBand, language: storyLang, avatar });
+      router.push("/parent");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <main className={`flex flex-1 flex-col items-center justify-center gap-8 p-6 ${f}`}>
       <h1 className="text-3xl font-extrabold">🦓 {t(lang, "obWelcome")}</h1>
+
+      {step === "account" && (
+        <div className="flex w-full max-w-sm flex-col gap-4">
+          <p className="text-lg font-bold">{t(lang, "obAccount")}</p>
+          {confirmNotice ? (
+            <>
+              <p className="rounded-2xl bg-sunshine/30 px-4 py-3">{t(lang, "confirmEmail")}</p>
+              <Link href="/auth">
+                <Button size="lg" className={`w-full ${f}`}>
+                  {t(lang, "signIn")} →
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <form onSubmit={createAccount} className="flex flex-col gap-4">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t(lang, "email")}
+                className="rounded-2xl border-2 border-ink/15 bg-white px-4 py-3 text-lg outline-none focus:border-teal"
+              />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t(lang, "password")}
+                className="rounded-2xl border-2 border-ink/15 bg-white px-4 py-3 text-lg outline-none focus:border-teal"
+              />
+              {authError && <p className="font-bold text-rose">{authError}</p>}
+              <Button type="submit" size="lg" disabled={busy} className={f}>
+                {busy ? t(lang, "loading") : t(lang, "createAccount")}
+              </Button>
+              <p className="text-center text-ink/60">
+                {t(lang, "haveAccount")}{" "}
+                <Link href="/auth" className="font-bold text-teal underline">
+                  {t(lang, "signIn")}
+                </Link>
+              </p>
+            </form>
+          )}
+        </div>
+      )}
 
       {step === "family" && (
         <div className="flex w-full max-w-sm flex-col gap-5">
@@ -165,8 +242,8 @@ export default function OnboardingPage() {
               </button>
             ))}
           </div>
-          <Button size="lg" disabled={childName.trim().length === 0} onClick={finish} className={f}>
-            {t(lang, "obFinish")} 🎉
+          <Button size="lg" disabled={childName.trim().length === 0 || busy} onClick={finish} className={f}>
+            {busy ? t(lang, "loading") : `${t(lang, "obFinish")} 🎉`}
           </Button>
         </div>
       )}

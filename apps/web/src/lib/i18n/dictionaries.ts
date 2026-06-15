@@ -73,6 +73,20 @@ const en = {
   themeSharing: "Sharing",
   themeHonesty: "Honesty",
   themeCounting: "Counting",
+
+  // Auth (cloud mode)
+  email: "Email",
+  password: "Password",
+  signIn: "Sign in",
+  signOut: "Sign out",
+  createAccount: "Create your account",
+  obAccount: "First, create your parent account",
+  haveAccount: "Already have an account?",
+  needAccount: "New to Zebra?",
+  authError: "Couldn't do that — check your email and password",
+  weakPassword: "Password must be at least 6 characters",
+  confirmEmail: "Almost there! Check your email to confirm, then sign in.",
+  loading: "Please wait…",
 } as const;
 
 export type UiKey = keyof typeof en;
@@ -140,6 +154,19 @@ const ur: Record<UiKey, string> = {
   themeSharing: "بانٹنا",
   themeHonesty: "سچائی",
   themeCounting: "گنتی",
+
+  email: "ای میل",
+  password: "پاس ورڈ",
+  signIn: "سائن اِن",
+  signOut: "سائن آؤٹ",
+  createAccount: "اپنا اکاؤنٹ بنائیں",
+  obAccount: "پہلے، اپنا والدین اکاؤنٹ بنائیں",
+  haveAccount: "پہلے سے اکاؤنٹ ہے؟",
+  needAccount: "زیبرا پر نئے ہیں؟",
+  authError: "نہیں ہو سکا — اپنا ای میل اور پاس ورڈ دیکھیں",
+  weakPassword: "پاس ورڈ کم از کم 6 حروف کا ہو",
+  confirmEmail: "بس تھوڑا سا باقی! تصدیق کے لیے اپنا ای میل دیکھیں، پھر سائن اِن کریں۔",
+  loading: "انتظار کریں…",
 };
 
 export const dictionaries: Record<Lang, Record<UiKey, string>> = { en, ur };

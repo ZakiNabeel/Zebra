@@ -1,14 +1,14 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { StoryArt } from "@/components/art/StoryArt";
 import { t, fontFor } from "@/lib/i18n";
 import { useFamily, useHydrated } from "@/lib/store/family";
-import { SEED_STORIES } from "@/lib/content/seed-stories";
-import { storiesForProfile } from "@/lib/content/filter";
+import { loadKidStories } from "@/lib/content/library";
+import type { Story } from "@/lib/content/types";
 
 /** The story reader: one page at a time, big art, big text. */
 export default function StoryReader({
@@ -20,20 +20,32 @@ export default function StoryReader({
   const hydrated = useHydrated();
   const router = useRouter();
   const profiles = useFamily((s) => s.profiles);
+  const profile = profiles.find((p) => p.id === profileId);
   const [pageIndex, setPageIndex] = useState(0);
   const [finished, setFinished] = useState(false);
 
-  if (!hydrated) return null;
+  // Resolve through the SAME safety loader as the library — a story not visible
+  // to this profile can't be opened by URL either. `loaded` distinguishes
+  // "still loading" from "loaded, not allowed".
+  const [story, setStory] = useState<Story | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (!profile) return;
+    loadKidStories(profile)
+      .then((list) => {
+        setStory(list.find((s) => s.id === storyId) ?? null);
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, storyId]);
 
-  const profile = profiles.find((p) => p.id === profileId);
+  if (!hydrated) return null;
   if (!profile) {
     router.replace("/kid");
     return null;
   }
-
-  // Resolve through the same safety filter as the library — a story that
-  // isn't visible to this profile can't be opened by URL either.
-  const story = storiesForProfile(SEED_STORIES, profile).find((s) => s.id === storyId);
+  if (!loaded) return null;
   if (!story) {
     router.replace(`/kid/${profile.id}`);
     return null;

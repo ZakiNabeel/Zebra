@@ -1,13 +1,13 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { StoryArt } from "@/components/art/StoryArt";
 import { t, fontFor } from "@/lib/i18n";
 import { useFamily, useHydrated } from "@/lib/store/family";
-import { SEED_STORIES } from "@/lib/content/seed-stories";
-import { storiesForProfile } from "@/lib/content/filter";
+import { loadKidStories } from "@/lib/content/library";
+import type { Story } from "@/lib/content/types";
 
 /** Kid home: the child's library, filtered to their age band & profile. */
 export default function KidHome({ params }: { params: Promise<{ profileId: string }> }) {
@@ -17,6 +17,12 @@ export default function KidHome({ params }: { params: Promise<{ profileId: strin
   const profiles = useFamily((s) => s.profiles);
   const profile = profiles.find((p) => p.id === profileId);
 
+  const [stories, setStories] = useState<Story[] | null>(null);
+  useEffect(() => {
+    if (profile) loadKidStories(profile).then(setStories).catch(() => setStories([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id]);
+
   if (!hydrated) return null;
   if (!profile) {
     router.replace("/kid");
@@ -25,7 +31,6 @@ export default function KidHome({ params }: { params: Promise<{ profileId: strin
 
   const lang = profile.language; // kid UI follows the child's language
   const f = fontFor(lang);
-  const stories = storiesForProfile(SEED_STORIES, profile);
 
   return (
     <main className={`kid-surface flex flex-1 flex-col p-6 ${f}`} dir={lang === "ur" ? "rtl" : "ltr"}>
@@ -40,10 +45,13 @@ export default function KidHome({ params }: { params: Promise<{ profileId: strin
 
       <h2 className="mb-4 text-2xl font-bold text-ink/80">📚 {t(lang, "kidPickStory")}</h2>
 
-      {stories.length === 0 && <p className="text-ink/60">{t(lang, "kidNoStories")}</p>}
+      {stories === null && <p className="text-ink/60">{t(lang, "loading")}</p>}
+      {stories !== null && stories.length === 0 && (
+        <p className="text-ink/60">{t(lang, "kidNoStories")}</p>
+      )}
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {stories.map((story) => (
+        {(stories ?? []).map((story) => (
           <Link
             key={story.id}
             href={`/kid/${profile.id}/story/${story.id}`}

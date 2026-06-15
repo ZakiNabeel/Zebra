@@ -13,9 +13,9 @@ Safe kids' (under-12) learning & stories app. Pakistan-first, **Urdu + English o
 
 ## Stack & layout
 - Next.js 16 (App Router, Turbopack) + TS + Tailwind v4 (`@theme` tokens in `globals.css` — use `bg-mango`, `text-ink`, etc., never raw hex in components).
-- **Next 16 gotchas:** `params` is a `Promise` (`use(params)` in client pages); read `node_modules/next/dist/docs/` when unsure — training data may be stale.
+- **Next 16 gotchas:** `params` is a `Promise` (`use(params)` in client pages); **middleware is renamed `proxy.ts`** (we use `src/proxy.ts` for Supabase session refresh); read `node_modules/next/dist/docs/` when unsure — training data may be stale.
 - State: zustand (persisted stores in `src/lib/store/`); content types & zod schemas in `src/lib/content/types.ts`.
-- Local mode (localStorage) is the current data layer; Supabase adapter arrives sprint 2 behind the same store actions.
+- **Dual data mode:** `isSupabaseConfigured()` switches everything. Cloud mode = Supabase Auth + Postgres + RLS (real accounts); local mode = localStorage (no keys, offline/demo, used by tests). Same store actions (`useFamily`) and same Kid loader (`loadKidStories`) drive both. Cloud ops live in `src/lib/data/cloud.ts`; Kid Mode reads ONLY via the `kid_library()` RPC. Never let a child-facing path query the `stories` table directly.
 - Placeholder art: `src/components/art/StoryArt.tsx` (SVG cast). Real model sheets + Rive later.
 
 ## Workflow
@@ -25,4 +25,4 @@ Safe kids' (under-12) learning & stories app. Pakistan-first, **Urdu + English o
 - Costs: default to cheapest AI model that passes review; generation results are cached/shared; no per-view AI calls (see docs/plan/05).
 
 ## Sprint sequence (docs/plan/06-one-week-build.md)
-1 ✅ foundation (auth-local, profiles, kid mode, library, reader) · 2 Supabase + audio/TTS pipeline · 3 AI story generation + approval gate + illustrations · 4 games (spelling/maths) + coloring · 5 school workspace · 6 offline/PWA + polish · 7 Capacitor + store packaging.
+1 ✅ foundation (auth-local, profiles, kid mode, library, reader) · 2 ✅ Supabase live (cloud auth, RLS, approval-gate trigger, kid_library RPC; TTS moved to S3 pending Azure key) · 3 AI story generation + approval gate + illustrations + TTS · 4 games (spelling/maths) + coloring · 5 school workspace · 6 offline/PWA + frontend redesign polish · 7 Capacitor + store packaging.

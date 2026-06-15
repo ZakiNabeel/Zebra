@@ -26,8 +26,9 @@ Zebra is a walled-garden learning and stories platform. Children read, listen, s
 ## Status
 
 - **2026-06-11 — Pivot:** scrapped the Flutter + on-device-SLM v1 architecture in favor of web-first Next.js (now archived in `legacy/flutter-app/`; old diagrams in `docs/architecture/` are legacy reference). Languages narrowed to **Urdu + English**. Go-to-market: **schools first**.
-- **2026-06-11 — Sprint 1 shipped:** web foundation in `apps/web` — onboarding, PIN-gated Kid Mode, bilingual story library + reader, safety filter with tests, Supabase schema ready. See the [sprint log](docs/sprints/) ([report](docs/sprints/sprint-01-foundation.md) · [sequence diagrams](docs/sprints/sprint-01-sequence-diagrams.md)).
-- Next: Sprint 2 — Supabase live (auth, RLS), TTS narration pipeline.
+- **2026-06-11 — Sprint 1 shipped:** web foundation in `apps/web` — onboarding, PIN-gated Kid Mode, bilingual story library + reader, safety filter with tests, Supabase schema ready. ([report](docs/sprints/sprint-01-foundation.md) · [diagrams](docs/sprints/sprint-01-sequence-diagrams.md)).
+- **2026-06-16 — Sprint 2 shipped:** Supabase live — parent accounts (email/password), cloud family/profiles/stories, and the safety invariant now enforced **in the database** (RLS + approval-gate trigger + `kid_library` RPC), with local mode preserved as the offline/test path. One 60-second schema step pending. ([report](docs/sprints/sprint-02-supabase.md) · [diagrams](docs/sprints/sprint-02-sequence-diagrams.md)).
+- Next: Sprint 3 — AI story generation behind the approval gate, illustrations, and TTS narration.
 
 ## Run it
 
