@@ -27,8 +27,9 @@ Zebra is a walled-garden learning and stories platform. Children read, listen, s
 
 - **2026-06-11 — Pivot:** scrapped the Flutter + on-device-SLM v1 architecture in favor of web-first Next.js (now archived in `legacy/flutter-app/`; old diagrams in `docs/architecture/` are legacy reference). Languages narrowed to **Urdu + English**. Go-to-market: **schools first**.
 - **2026-06-11 — Sprint 1 shipped:** web foundation in `apps/web` — onboarding, PIN-gated Kid Mode, bilingual story library + reader, safety filter with tests, Supabase schema ready. ([report](docs/sprints/sprint-01-foundation.md) · [diagrams](docs/sprints/sprint-01-sequence-diagrams.md)).
-- **2026-06-16 — Sprint 2 shipped:** Supabase live — parent accounts (email/password), cloud family/profiles/stories, and the safety invariant now enforced **in the database** (RLS + approval-gate trigger + `kid_library` RPC), with local mode preserved as the offline/test path. One 60-second schema step pending. ([report](docs/sprints/sprint-02-supabase.md) · [diagrams](docs/sprints/sprint-02-sequence-diagrams.md)).
-- Next: Sprint 3 — AI story generation behind the approval gate, illustrations, and TTS narration.
+- **2026-06-16 — Sprint 2 shipped:** Supabase live — parent accounts (email/password), cloud family/profiles/stories, and the safety invariant now enforced **in the database** (RLS + approval-gate trigger + `kid_library` RPC), with local mode preserved as the offline/test path. Schema applied, library seeded, RLS proven live. ([report](docs/sprints/sprint-02-supabase.md) · [diagrams](docs/sprints/sprint-02-sequence-diagrams.md)).
+- **2026-06-16 — Sprint 3 shipped:** AI story generation behind the approval gate — adults create stories from a **structured prompt** (no free-text-to-model), an **automated moderation** screen can only reject, passing stories enter a **review queue**, and nothing reaches a child until a parent **approves** it (per child). Runs at **$0 with no AI keys** via deterministic story templates + browser Web Speech narration; add Gemini/OpenAI/Azure keys to upgrade each layer. ([report](docs/sprints/sprint-03-generation.md) · [diagrams](docs/sprints/sprint-03-sequence-diagrams.md)).
+- Next: Sprint 4 — spelling & maths games + coloring.
 
 ## Run it
 

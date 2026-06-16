@@ -16,7 +16,8 @@ Safe kids' (under-12) learning & stories app. Pakistan-first, **Urdu + English o
 - **Next 16 gotchas:** `params` is a `Promise` (`use(params)` in client pages); **middleware is renamed `proxy.ts`** (we use `src/proxy.ts` for Supabase session refresh); read `node_modules/next/dist/docs/` when unsure — training data may be stale.
 - State: zustand (persisted stores in `src/lib/store/`); content types & zod schemas in `src/lib/content/types.ts`.
 - **Dual data mode:** `isSupabaseConfigured()` switches everything. Cloud mode = Supabase Auth + Postgres + RLS (real accounts); local mode = localStorage (no keys, offline/demo, used by tests). Same store actions (`useFamily`) and same Kid loader (`loadKidStories`) drive both. Cloud ops live in `src/lib/data/cloud.ts`; Kid Mode reads ONLY via the `kid_library()` RPC. Never let a child-facing path query the `stories` table directly.
-- Placeholder art: `src/components/art/StoryArt.tsx` (SVG cast). Real model sheets + Rive later.
+- **AI pipeline (`src/lib/ai/`):** same fallback pattern as data mode — each provider has a real free-tier version AND a deterministic $0 fallback, switched by `isGeminiConfigured()`/`isModerationConfigured()`/`isAzureSpeechConfigured()`. Generation is server-only via `src/app/api/generate/route.ts` (parent-auth-gated in cloud mode); the adult studio calls `src/lib/data/studio.ts` (dual-mode persist). Flow: structured prompt (no free-text-to-model) → generate → moderate (can only reject) → `pending_review` → **human approve** → `published_profile`. Parents publish per-child only, never to `published_library`. Never add a free-text path from a child to a model.
+- Placeholder art: `src/components/art/StoryArt.tsx` (SVG cast). Real model sheets + Rive later. Generated stories reference the same SVG scene keys (raster image-gen is a deferred seam).
 
 ## Workflow
 - Work happens in `apps/web`: `npm run dev` / `npm test` / `npm run build`. **Both `npm test` and `npm run build` must pass before any commit.**
@@ -25,4 +26,4 @@ Safe kids' (under-12) learning & stories app. Pakistan-first, **Urdu + English o
 - Costs: default to cheapest AI model that passes review; generation results are cached/shared; no per-view AI calls (see docs/plan/05).
 
 ## Sprint sequence (docs/plan/06-one-week-build.md)
-1 ✅ foundation (auth-local, profiles, kid mode, library, reader) · 2 ✅ Supabase live (cloud auth, RLS, approval-gate trigger, kid_library RPC; TTS moved to S3 pending Azure key) · 3 AI story generation + approval gate + illustrations + TTS · 4 games (spelling/maths) + coloring · 5 school workspace · 6 offline/PWA + frontend redesign polish · 7 Capacitor + store packaging.
+1 ✅ foundation (auth-local, profiles, kid mode, library, reader) · 2 ✅ Supabase live (cloud auth, RLS, approval-gate trigger, kid_library RPC) · 3 ✅ AI story generation + approval gate + TTS (structured prompt → generate → moderate → review → approve; $0 fallbacks: templates + keyword screen + Web Speech; raster illustrations deferred seam) · 4 games (spelling/maths) + coloring · 5 school workspace · 6 offline/PWA + frontend redesign polish · 7 Capacitor + store packaging.

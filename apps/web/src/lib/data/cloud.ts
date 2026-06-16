@@ -143,3 +143,70 @@ export async function libraryCount(): Promise<number> {
   if (error) throw error;
   return count ?? 0;
 }
+
+// ---- Adult creation pipeline (generate → review → approve) ----
+const STORY_COLS = "id, title, theme, age_bands, status, cover_scene, profile_id, pages";
+
+/** Store a freshly generated story as pending_review (never child-visible). */
+export async function createPendingStory(
+  story: Story,
+  opts: { moderation: unknown; prompt: unknown },
+): Promise<Story> {
+  const user = await currentUser();
+  if (!user) throw new Error("Not signed in");
+  const { data, error } = await client()
+    .from("stories")
+    .insert({
+      id: story.id,
+      title: story.title,
+      theme: story.theme,
+      age_bands: story.ageBands,
+      status: "pending_review",
+      cover_scene: story.coverScene,
+      profile_id: story.profileId ?? null,
+      created_by: user.id,
+      generation_prompt: opts.prompt,
+      moderation_verdict: opts.moderation,
+      pages: story.pages,
+    })
+    .select(STORY_COLS)
+    .single();
+  if (error) throw error;
+  return rowToStory(data as StoryRow);
+}
+
+/** The parent's own review queue — RLS scopes this to created_by = me. */
+export async function listPendingStories(): Promise<Story[]> {
+  const { data, error } = await client()
+    .from("stories")
+    .select(STORY_COLS)
+    .eq("status", "pending_review")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return ((data ?? []) as StoryRow[]).map(rowToStory);
+}
+
+/**
+ * Approve a pending story for ONE child (published_profile only — parents never
+ * publish to the global library). Sets approval fields so the DB trigger lets it
+ * through; moderation_verdict was set at creation.
+ */
+export async function approveStory(storyId: string, profileId: string): Promise<void> {
+  const user = await currentUser();
+  if (!user) throw new Error("Not signed in");
+  const { error } = await client()
+    .from("stories")
+    .update({
+      status: "published_profile",
+      profile_id: profileId,
+      approved_by: user.id,
+      approved_at: new Date().toISOString(),
+    })
+    .eq("id", storyId);
+  if (error) throw error;
+}
+
+export async function rejectStory(storyId: string): Promise<void> {
+  const { error } = await client().from("stories").update({ status: "rejected" }).eq("id", storyId);
+  if (error) throw error;
+}

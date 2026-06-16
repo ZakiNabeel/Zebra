@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { StoryArt } from "@/components/art/StoryArt";
+import { SpeakButton } from "@/components/reader/SpeakButton";
 import { t, fontFor } from "@/lib/i18n";
 import { useFamily, useHydrated } from "@/lib/store/family";
 import { loadKidStories } from "@/lib/content/library";
@@ -114,13 +115,20 @@ export default function StoryReader({
         </div>
       </header>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-center gap-6">
         <StoryArt art={page.art} />
         <p
           className={`text-center text-2xl font-bold leading-relaxed ${lang === "ur" ? "urdu" : ""}`}
         >
           {page.text[lang]}
         </p>
+        <SpeakButton
+          key={pageIndex}
+          text={page.text[lang]}
+          lang={lang}
+          audioUrl={page.audio?.[lang]}
+          className={f}
+        />
       </div>
 
       <div className="flex items-center justify-between gap-4">

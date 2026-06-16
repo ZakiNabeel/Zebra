@@ -8,6 +8,7 @@ import { t, fontFor, useUiLang } from "@/lib/i18n";
 import { useFamily, useHydrated, CLOUD } from "@/lib/store/family";
 import { SEED_STORIES } from "@/lib/content/seed-stories";
 import { libraryCount as cloudLibraryCount } from "@/lib/data/cloud";
+import { StudioPanel } from "@/components/parent/StudioPanel";
 import type { AgeBand, StoryLang } from "@/lib/content/types";
 
 const AVATARS = ["🦓", "🐢", "🐆", "🐬", "🦜", "⭐", "🌙", "🚀"];
@@ -184,11 +185,14 @@ export default function ParentDashboard() {
         </div>
       </section>
 
+      {/* Create + review (Sprint 3): the adult-only AI pipeline + approval gate */}
+      <StudioPanel profiles={profiles} lang={lang} />
+
       {/* Roadmap teaser — replaced by real features sprint by sprint */}
       <section>
-        <h2 className="mb-3 text-xl font-bold">✨ {t(lang, "pdComingSoon")}</h2>
+        <h2 className="mb-3 text-xl font-bold">🎯 {t(lang, "pdComingSoon")}</h2>
         <ul className="flex flex-col gap-2">
-          {(["pdSoonCreate", "pdSoonAudio", "pdSoonGames"] as const).map((k) => (
+          {(["pdSoonGames"] as const).map((k) => (
             <li key={k} className="rounded-2xl bg-white/70 px-4 py-3 text-ink/70 border border-dashed border-ink/20">
               {t(lang, k)}
             </li>
