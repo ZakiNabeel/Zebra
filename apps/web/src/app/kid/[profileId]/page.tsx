@@ -4,10 +4,17 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { StoryArt } from "@/components/art/StoryArt";
-import { t, fontFor } from "@/lib/i18n";
+import { t, fontFor, type UiKey } from "@/lib/i18n";
 import { useFamily, useHydrated } from "@/lib/store/family";
+import { useProgress } from "@/lib/store/progress";
 import { loadKidStories } from "@/lib/content/library";
 import type { Story } from "@/lib/content/types";
+
+const ACTIVITIES: { href: string; emoji: string; label: UiKey; color: string }[] = [
+  { href: "spell", emoji: "🔤", label: "kidSpell", color: "bg-teal/15" },
+  { href: "maths", emoji: "🔢", label: "kidMaths", color: "bg-mango/15" },
+  { href: "color", emoji: "🎨", label: "kidColor", color: "bg-berry/15" },
+];
 
 /** Kid home: the child's library, filtered to their age band & profile. */
 export default function KidHome({ params }: { params: Promise<{ profileId: string }> }) {
@@ -16,6 +23,7 @@ export default function KidHome({ params }: { params: Promise<{ profileId: strin
   const router = useRouter();
   const profiles = useFamily((s) => s.profiles);
   const profile = profiles.find((p) => p.id === profileId);
+  const stars = useProgress((s) => (profile ? (s.stars[profile.id] ?? 0) : 0));
 
   const [stories, setStories] = useState<Story[] | null>(null);
   useEffect(() => {
@@ -38,12 +46,30 @@ export default function KidHome({ params }: { params: Promise<{ profileId: strin
         <h1 className="text-3xl font-extrabold">
           {profile.avatar} {t(lang, "kidHello")}, {profile.name}!
         </h1>
-        <Link href="/kid" className="rounded-2xl bg-white/80 px-4 py-2 font-bold text-ink/60 border border-ink/10">
-          ← {t(lang, "kidExit")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <span className="rounded-2xl bg-sunshine/40 px-3 py-2 font-bold">⭐ {stars}</span>
+          <Link href="/kid" className="rounded-2xl bg-white/80 px-4 py-2 font-bold text-ink/60 border border-ink/10">
+            ← {t(lang, "kidExit")}
+          </Link>
+        </div>
       </header>
 
-      <h2 className="mb-4 text-2xl font-bold text-ink/80">📚 {t(lang, "kidPickStory")}</h2>
+      {/* Activity hub */}
+      <h2 className="mb-3 text-2xl font-bold text-ink/80">🎲 {t(lang, "kidPlay")}</h2>
+      <div className="mb-7 grid grid-cols-3 gap-3 sm:gap-5">
+        {ACTIVITIES.map((a) => (
+          <Link
+            key={a.href}
+            href={`/kid/${profile.id}/${a.href}`}
+            className={`flex flex-col items-center justify-center gap-2 rounded-[1.75rem] ${a.color} p-5 border-4 border-transparent transition hover:border-sunshine active:scale-95`}
+          >
+            <span className="text-5xl">{a.emoji}</span>
+            <span className="text-center text-lg font-bold">{t(lang, a.label)}</span>
+          </Link>
+        ))}
+      </div>
+
+      <h2 className="mb-4 text-2xl font-bold text-ink/80">📚 {t(lang, "kidStories")}</h2>
 
       {stories === null && <p className="text-ink/60">{t(lang, "loading")}</p>}
       {stories !== null && stories.length === 0 && (

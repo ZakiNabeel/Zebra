@@ -116,6 +116,44 @@ const en = {
   listen: "Listen",
   stopAudio: "Stop",
 
+  // Activities hub (Kid Mode)
+  kidPlay: "Let's play!",
+  kidStories: "Stories",
+  kidSpell: "Spelling",
+  kidMaths: "Maths",
+  kidColor: "Coloring",
+  kidStars: "stars",
+
+  // Games — shared
+  gCorrect: "Correct!",
+  gWellDone: "Well done!",
+  gTryAgain: "Try again",
+  gNext: "Next",
+  gRoundDone: "Round complete!",
+  gStarsEarned: "stars earned",
+  gPlayAgain: "Play again",
+  gScore: "Score",
+
+  // Spelling
+  spYourTurn: "Spell the word!",
+  spHint: "Tap the letters in order",
+  spHearWord: "Hear the word",
+
+  // Maths
+  gmHowMany: "How many?",
+  gmWhichBigger: "Which is bigger?",
+  gmPickAnswer: "Pick the answer",
+
+  // Coloring
+  colPick: "Pick a page to color",
+  colChoose: "Choose a color",
+  colUndo: "Undo",
+  colClear: "Clear",
+  colSave: "Save",
+  colSaved: "Saved to your gallery!",
+  colGallery: "My Gallery",
+  colEmpty: "Your saved pictures will appear here.",
+
   // Auth (cloud mode)
   email: "Email",
   password: "Password",
@@ -234,6 +272,39 @@ const ur: Record<UiKey, string> = {
 
   listen: "سنیں",
   stopAudio: "روکیں",
+
+  kidPlay: "آؤ کھیلیں!",
+  kidStories: "کہانیاں",
+  kidSpell: "ہجے",
+  kidMaths: "حساب",
+  kidColor: "رنگ بھرو",
+  kidStars: "ستارے",
+
+  gCorrect: "درست!",
+  gWellDone: "شاباش!",
+  gTryAgain: "دوبارہ کوشش کرو",
+  gNext: "اگلا",
+  gRoundDone: "راؤنڈ مکمل!",
+  gStarsEarned: "ستارے ملے",
+  gPlayAgain: "دوبارہ کھیلو",
+  gScore: "اسکور",
+
+  spYourTurn: "لفظ کے ہجے کرو!",
+  spHint: "حروف ترتیب سے دبائیں",
+  spHearWord: "لفظ سنیں",
+
+  gmHowMany: "کتنے ہیں؟",
+  gmWhichBigger: "کون سا بڑا ہے؟",
+  gmPickAnswer: "جواب چنو",
+
+  colPick: "رنگ بھرنے کے لیے صفحہ چنو",
+  colChoose: "رنگ چنو",
+  colUndo: "واپس",
+  colClear: "صاف کرو",
+  colSave: "محفوظ کرو",
+  colSaved: "آپ کی گیلری میں محفوظ ہو گیا!",
+  colGallery: "میری گیلری",
+  colEmpty: "آپ کی محفوظ تصویریں یہاں نظر آئیں گی۔",
 
   email: "ای میل",
   password: "پاس ورڈ",
