@@ -19,34 +19,33 @@ const BANNED = [
 ];
 
 function flatten(story: GeneratedStory): string {
-  return [
-    story.title.en,
-    story.title.ur,
-    ...story.pages.flatMap((p) => [p.text.en, p.text.ur]),
-  ]
-    .join("\n")
-    .toLowerCase();
+  return [story.title.en, story.title.ur, ...story.pages.flatMap((p) => [p.text.en, p.text.ur])].join("\n");
 }
 
-export async function moderateStory(story: GeneratedStory): Promise<Moderation> {
+/** Screen any block of text (stories, slides, teacher topics) the same way. */
+export async function moderateText(text: string): Promise<Moderation> {
   if (isModerationConfigured()) {
     try {
-      return await moderateWithOpenAI(story);
+      return await moderateWithOpenAI(text);
     } catch (err) {
       console.error("[moderate] OpenAI failed, falling back to keyword screen:", err);
     }
   }
-  return moderateWithKeywords(story);
+  return moderateWithKeywords(text);
 }
 
-async function moderateWithOpenAI(story: GeneratedStory): Promise<Moderation> {
+export async function moderateStory(story: GeneratedStory): Promise<Moderation> {
+  return moderateText(flatten(story));
+}
+
+async function moderateWithOpenAI(text: string): Promise<Moderation> {
   const res = await fetch("https://api.openai.com/v1/moderations", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${OPENAI_API_KEY}`,
     },
-    body: JSON.stringify({ model: "omni-moderation-latest", input: flatten(story) }),
+    body: JSON.stringify({ model: "omni-moderation-latest", input: text }),
   });
   if (!res.ok) throw new Error(`OpenAI moderation ${res.status}: ${await res.text()}`);
   const data = await res.json();
@@ -60,9 +59,9 @@ async function moderateWithOpenAI(story: GeneratedStory): Promise<Moderation> {
   return { source: "openai", verdict: flagged ? "flagged" : "pass", flags, autoBlocked: flagged };
 }
 
-function moderateWithKeywords(story: GeneratedStory): Moderation {
-  const text = flatten(story);
-  const flags = BANNED.filter((w) => text.includes(w));
+function moderateWithKeywords(text: string): Moderation {
+  const lower = text.toLowerCase();
+  const flags = BANNED.filter((w) => lower.includes(w));
   const flagged = flags.length > 0;
   return { source: "keyword", verdict: flagged ? "flagged" : "pass", flags, autoBlocked: flagged };
 }

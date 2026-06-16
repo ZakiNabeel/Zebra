@@ -54,3 +54,29 @@ body {
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
+
+/* ---- Print / "Save as PDF" for teacher worksheets & presentations ---- */
+/* PDF export is the browser's own print engine — $0, client-side, unlimited scale. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  .print-page {
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  body {
+    background: #ffffff;
+  }
+}

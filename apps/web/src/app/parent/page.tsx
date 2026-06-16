@@ -185,6 +185,21 @@ export default function ParentDashboard() {
         </div>
       </section>
 
+      {/* Teacher tools (Sprint 5): presentation maker, worksheets, classes */}
+      <section className="mb-8">
+        <Link
+          href="/school"
+          className="flex items-center gap-4 rounded-3xl bg-teal/10 p-5 border border-teal/20 transition hover:border-teal active:scale-[0.99]"
+        >
+          <span className="text-4xl">🎓</span>
+          <div className="flex-1">
+            <div className="text-lg font-bold">{t(lang, "schoolTitle")}</div>
+            <div className="text-sm text-ink/60">{t(lang, "schoolSub")}</div>
+          </div>
+          <span className="text-2xl text-teal">→</span>
+        </Link>
+      </section>
+
       {/* Create + review (Sprint 3): the adult-only AI pipeline + approval gate */}
       <StudioPanel profiles={profiles} lang={lang} />
 
